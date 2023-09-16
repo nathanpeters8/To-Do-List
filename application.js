@@ -1,5 +1,5 @@
+// get request for displaying all of the tasks
 var displayTasks = function () {
-  // get request for list of tasks
   $.ajax({
     type: "GET",
     url: "https://fewd-todolist-api.onrender.com/tasks?api_key=317",
@@ -33,7 +33,7 @@ var displayTasks = function () {
   });
 };
 
-// create new task
+// post request to create new task
 var createNewTask = function () {
   $.ajax({
     type: "POST",
@@ -56,6 +56,7 @@ var createNewTask = function () {
   });
 };
 
+// delete request to delete specific task by id
 var deleteTask = function (id) {
   $.ajax({
     type: "DELETE",
@@ -70,7 +71,7 @@ var deleteTask = function (id) {
   });
 };
 
-// mark a task as complete
+// put request to mark a task as complete
 var markTaskComplete = function (id) {
   $.ajax({
     type: "PUT",
@@ -86,9 +87,27 @@ var markTaskComplete = function (id) {
   });
 };
 
+// put request to mark task as active or not complete
+var markTaskActive = function (id) {
+  $.ajax({
+    type: "PUT",
+    url: "https://fewd-todolist-api.onrender.com/tasks/" + id + "/mark_active?api_key=317",
+    dataType: "json",
+    success: function (response, textStatus) {
+      console.log(response);
+      displayTasks();
+    },
+    error: function (request, textStatus, errorMessage) {
+      console.log(errorMessage);
+    },
+  });
+};
+
 // check if dom is ready
 $(document).ready(function () {
+  //display all tasks
   displayTasks();
+
   // create task when add task button clicked
   $("#addTask").on("click", function (event) {
     event.preventDefault();
@@ -97,15 +116,15 @@ $(document).ready(function () {
 
   // delete task when remove button clicked
   $(document).on("click", ".remove", function () {
-    console.log($(this).data("id"));
     deleteTask($(this).data("id"));
   });
 
   // mark a task complete when checkbox checked
   $(document).on("change", ".markComplete", function () {
-    console.log(this.checked);
     if (this.checked) {
       markTaskComplete($(this).data("id"));
+    } else {
+      markTaskActive($(this).data("id"));
     }
   });
 });
