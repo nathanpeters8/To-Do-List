@@ -1,5 +1,6 @@
+
 // get request for displaying all of the tasks
-var displayTasks = function () {
+var displayTasks = function (filter='') {
   $.ajax({
     type: "GET",
     url: "https://fewd-todolist-api.onrender.com/tasks?api_key=317",
@@ -8,7 +9,28 @@ var displayTasks = function () {
     success: function (response, textStatus) {
       // loop through each task
       $("#todo-list").empty();
-      response.tasks.forEach(function (task) {
+      var responseTasks = response.tasks;
+
+      //check if we need to filter active or completed tasks
+      if(filter === 'active') {
+        responseTasks = [];
+        response.tasks.forEach(function(task) {
+          if(task.completed == false) {
+            responseTasks.push(task);
+          }
+        });        
+      }
+      else if(filter === 'completed') {
+        responseTasks = [];
+        response.tasks.forEach(function(task) {
+          if(task.completed == true) {
+            responseTasks.push(task);
+          }
+        });          
+      }
+
+      // loop through tasks needed to be displayed
+      responseTasks.forEach(function (task) {
         console.log(task.content);
         //inject into DOM
         var htmlString =
@@ -16,7 +38,7 @@ var displayTasks = function () {
           task.id +
           '"><i class="fa-solid fa-x fa-md" style="color: #e23838;"></i></span><h3 class="text-lowercase mb-0 col-3 ' +
           (task.completed ? "text-decoration-line-through" : "") +
-          '">' +
+          '" data-completed="' + task.completed + '">' +
           task.content +
           '</h3><input type="checkbox" name="complete" class="markComplete form-check form-check-input btn btn-outline-primary" data-id="' +
           task.id +
@@ -103,10 +125,15 @@ var markTaskActive = function (id) {
   });
 };
 
+
 // check if dom is ready
 $(document).ready(function () {
   //display all tasks
   displayTasks();
+
+  $(document).on('click', "#all", function() {
+    displayTasks();
+  })
 
   // create task when add task button clicked
   $("#addTask").on("click", function (event) {
@@ -127,4 +154,14 @@ $(document).ready(function () {
       markTaskActive($(this).data("id"));
     }
   });
+
+  //get active tasks when active button pressed
+  $(document).on('click', '#active', function() {
+    displayTasks('active');
+  });
+
+  //get active tasks when active button pressed
+  $(document).on('click', '#completed', function() {
+    displayTasks('completed');
+  })
 });
