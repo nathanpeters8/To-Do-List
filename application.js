@@ -1,5 +1,5 @@
 // get request for displaying all of the tasks
-var displayTasks = function () {
+var displayTasks = function (filter = "") {
   $.ajax({
     type: "GET",
     url: "https://fewd-todolist-api.onrender.com/tasks?api_key=317",
@@ -8,17 +8,41 @@ var displayTasks = function () {
     success: function (response, textStatus) {
       // loop through each task
       $("#todo-list").empty();
-      response.tasks.forEach(function (task) {
+      var responseTasks = response.tasks;
+
+      //check if we need to filter active or completed tasks
+      if (filter === "active") {
+        responseTasks = [];
+        response.tasks.forEach(function (task) {
+          if (task.completed == false) {
+            responseTasks.push(task);
+          }
+        });
+      } else if (filter === "completed") {
+        responseTasks = [];
+        response.tasks.forEach(function (task) {
+          if (task.completed == true) {
+            responseTasks.push(task);
+          }
+        });
+      }
+
+      // loop through tasks needed to be displayed
+      responseTasks.forEach(function (task) {
         console.log(task.content);
         //inject into DOM
         var htmlString =
-          '<div class="task d-flex justify-content-evenly align-items-center border-bottom p-2"><span class="remove mt-1" data-id="' +
+          '<div class="task d-flex justify-content-evenly align-items-center border-bottom border-dark p-2"><span title="Delete item" class="remove mt-1" data-id="' +
           task.id +
           '"><i class="fa-solid fa-x fa-md" style="color: #e23838;"></i></span><h3 class="text-lowercase mb-0 col-3 ' +
           (task.completed ? "text-decoration-line-through" : "") +
+          '" data-completed="' +
+          task.completed +
           '">' +
           task.content +
-          '</h3><input type="checkbox" name="complete" class="markComplete form-check form-check-input btn btn-outline-primary" data-id="' +
+          '</h3><input title="' +
+          (task.completed ? "Mark active" : "Mark complete") +
+          '" type="checkbox" name="complete" class="markComplete form-check form-check-input btn btn-outline-primary" data-id="' +
           task.id +
           '" ' +
           (task.completed ? "checked" : "") +
@@ -119,7 +143,7 @@ $(document).ready(function () {
     deleteTask($(this).data("id"));
   });
 
-  // mark a task complete when checkbox checked
+  // mark a task complete or active when checkbox checked or unchecked
   $(document).on("change", ".markComplete", function () {
     if (this.checked) {
       markTaskComplete($(this).data("id"));
@@ -127,4 +151,23 @@ $(document).ready(function () {
       markTaskActive($(this).data("id"));
     }
   });
+
+  // filter tasks based on which filter button is pressed
+  $(document).on("click", "#filterButtons button", function () {
+    displayTasks(this.id);
+    $("#filterButtons button").removeClass("bg-warning");
+    $(this).addClass("bg-warning");
+  });
+
+  // display remove buttons when user hovers over task
+  $(document)
+    .on("mouseenter", ".task", function () {
+      $(this).addClass("bg-light");
+      $(this).find("i").fadeIn(1000);
+    })
+    .on("mouseleave", ".task", function () {
+      $(this).removeClass("bg-light");
+      $(this).find("i").finish();
+      $(this).find("i").fadeOut(500);
+    });
 });

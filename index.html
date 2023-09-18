@@ -32,17 +32,17 @@
           <input id="taskInput" type="text" class="form-control p-4" placeholder="What needs to be done?">
           <button class="btn btn-success" id="addTask">Add Task</button>
         </div>
-        <div class="container-sm col-6 border border-bottom-0 mt-4 px-0" id="todo-list">
+        <div class="container-sm col-6 border border-bottom-0 border-dark mt-4 px-0" id="todo-list">
           <!-- <div class="task d-flex justify-content-evenly align-items-center border-bottom p-2">
             <span class="remove mt-1"><i class="fa-solid fa-x fa-md" style="color: #e23838;"></i></span>
             <h3 class="text-lowercase mb-0 col-3">This is a task</h3>
             <input type="checkbox" name="complete" class="markComplete form-check form-check-input btn btn-outline-primary">
           </div> -->
         </div>
-        <div class="col-12 d-flex justify-content-center my-3 btn-group-sm">
-          <button class="btn btn-light me-2 mt-3">All</button>
-          <button class="btn btn-light me-2 mt-3">Active</button>
-          <button class="btn btn-light mt-3">Completed</button>
+        <div id='filterButtons' class="col-12 d-flex justify-content-center my-3 btn-group-sm">
+          <button title="Filter all tasks" id="all" class="btn btn-light me-2 mt-3">All</button>
+          <button title="Filter active tasks" id="active" class="btn btn-light me-2 mt-3">Active</button>
+          <button title="Filter completed tasks" id="completed" class="btn btn-light mt-3">Completed</button>
         </div>
       </div>
     </div>
